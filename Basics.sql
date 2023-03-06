@@ -288,18 +288,18 @@ WHERE id=1;
 ┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
 │                                                 Numeric                                                            │
 ├─────────────────────────────┬──────────────────────────────────────────────────────────────────────────────────────┤
-│ INT                         │ integer (signed/unsigned)                                                            │
+│ INT                         │ Integer (signed/unsigned).                                                           │
 │ FLOAT(M,D)                  │ Signed. Optionally: display length (M), number of decimals (D).                      │
 │ DOUBLE(M,D)                 │ Signed. Optionally: display length (M), number of decimals (D).                      │
 │ BOOL                        │ 0 = false, nonzero = true. Synonymum of TINYINT(1).                                  │
 ├─────────────────────────────┴──────────────────────────────────────────────────────────────────────────────────────┤
 │                                              Date and Time                                                         │
 ├─────────────────────────────┬──────────────────────────────────────────────────────────────────────────────────────┤
-│ DATE                        │ YYYY-MM-DD                                                                           │
-│ DATETIME                    │ YYYY-MM-DD HH:MM:SS                                                                  │
-│ TIMESTAMP                   │ seconds from Unix Epoch (midnight, January 1, 1970), converts to UTC when  retrieved │
-│ TIME                        │ HH:MM:SS                                                                             │
-│ YEAR                        │ YYYY                                                                                 │
+│ DATE                        │ 'YYYY-MM-DD'                                                                         │
+│ DATETIME                    │ 'YYYY-MM-DD HH:MM:SS'                                                                │
+│ TIMESTAMP                   │ Seconds from Unix Epoch (midnight, 1970/1/1), converts to UTC when  retrieved.       │
+│ TIME                        │ 'HH:MM:SS'                                                                           │
+│ YEAR                        │ 'YYYY'                                                                               │
 ├─────────────────────────────┴──────────────────────────────────────────────────────────────────────────────────────┤
 │                                                 String                                                             │
 ├─────────────────────────────┬──────────────────────────────────────────────────────────────────────────────────────┤
@@ -310,7 +310,43 @@ WHERE id=1;
 │ ENUM(val1, val2, val3, ...) │ Only one value from the list is allowed ('val1').                                    │
 │ SET(val1, val2, val3, ...)  │ Only one or more values from the list are allowed ('val1,val2').                     │
 └─────────────────────────────┴──────────────────────────────────────────────────────────────────────────────────────┘
+
+ • NOTE: there are functions like DATE_FORMAT that allow to format the date to display/retrieve it
+
+ ----- BASIC CONSTRAINTS -----
+┌──────────────────────┬──────────────────────────────────────────────────────────────────────────┐
+│ NOT NULL             │ Column cannot contain any NULL value.                                    │
+│ UNIQUE               │ Does not allow to insert a duplicate value in a column.                  │
+│ PRIMARY KEY (column) │ Unique index (avoid duplicates, faster data access & query performance.) │
+│ CHECK (condition)    │ Limits inserting a value according to a condition (like x>y).            │
+│ DEFAULT 'xyz'        │ This will be the value if no value is supplied during INSERT INTO.       │
+└──────────────────────┴──────────────────────────────────────────────────────────────────────────┘
+
+--ALTER TABLE
+  • to add, delete, or modify columns
+  • to add and drop constraints
 */
+
+--add column
+ALTER TABLE customers ADD date_of_birth DATE;
+
+--delete column
+ALTER TABLE customers DROP COLUMN date_of_birth;
+
+--delete table
+DROP TABLE orders_new_different_cols;
+
+--rename column
+  -- in MySQL 8.0:
+     ALTER TABLE customers
+     RENAME COLUMN last_name TO lastname;
+  -- older versions:
+     ALTER TABLE company.customers CHANGE last_name lastname VARCHAR(50);
+
+-- rename table
+RENAME TABLE orders_new TO orders_newer;
+
+
 
 
 
