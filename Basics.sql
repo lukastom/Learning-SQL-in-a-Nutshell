@@ -67,12 +67,17 @@ INSERT INTO customers (first_name, last_name, city, zipcode, age, salary) VALUES
 INSERT INTO `customers` (`first_name`, `last_name`, `city`, `zipcode`, `age`, `salary`) VALUES ('David', 'Williams', 'Los Angeles', '90052', 23, 1500);
 INSERT INTO customers (first_name, last_name, city, zipcode, age, salary) VALUES ('Chloe', 'Anderson', 'Chicago', '60607', 27, 3000);
 INSERT INTO customers (first_name, last_name, city, zipcode, age, salary) VALUES ('Emily', 'Adams', 'Houston', '77201', 34, 4500);
-INSERT INTO customers (first_name, last_name, city, zipcode, age, salary) VALUES ('James', 'Roberts', 'Philadelphia', '19104', 31, 2000);
-INSERT INTO customers (first_name, last_name, city, zipcode, age, salary) VALUES ('Andrew', 'Thomas', 'New York', '', 45, 2500);
-INSERT INTO customers (first_name, last_name, city, zipcode, age, salary) VALUES ('Daniel', 'Harris', 'New York', '', 30, 3000);
-INSERT INTO customers (first_name, last_name, city, zipcode, age, salary) VALUES ('Charlotte', 'Walker', 'Chicago', '', 35, 3500);
-INSERT INTO customers (first_name, last_name, city, zipcode, age, salary) VALUES ('Samuel', 'Clark', 'San Diego', '', 20, 4000);
-INSERT INTO customers (first_name, last_name, city, zipcode, age, salary) VALUES ('Anthony', 'Young', 'Los Angeles', '', 33, 5000);
+
+INSERT INTO customers (first_name, last_name, city, zipcode, age, salary)
+VALUES ('James', 'Roberts', 'Philadelphia', '19104', 31, 2000),
+       ('Andrew', 'Thomas', 'New York', '12345', 45, 2500),
+       ('Daniel', 'Harris', 'New York', '67890', 30, 3000),
+       ('Charlotte', 'Walker', 'Chicago', '56890', 35, 3500),
+       ('Samuel', 'Clark', 'San Diego', '44400', 20, 4000),
+       ('Anthony', 'Young', 'Los Angeles', '11199', 33, 5000);
+
+-- Without columns specified, we must to keep exact order and right data types.
+INSERT INTO customers VALUES (100, 'Anthony', 'Young', 'Los Angeles', '55522', 33, 5000);
 
 CREATE TABLE orders (
    id INT NOT NULL AUTO_INCREMENT,
@@ -87,6 +92,32 @@ INSERT INTO orders (name, customer_id, amount) VALUES ('Box', 5, 3000);
 INSERT INTO orders (name, customer_id, amount) VALUES ('Toy', 2, 4500);
 INSERT INTO orders (name, customer_id, amount) VALUES ('Flowers', 4, 1800);
 INSERT INTO orders (name, customer_id, amount) VALUES ('Cake', 1, 6700);
+INSERT INTO orders (name, customer_id, amount) VALUES ('Chocolate', 100, 500);
+
+CREATE TABLE orders_new (
+   id INT NOT NULL AUTO_INCREMENT,
+   name VARCHAR (50),
+   customer_id INT,
+   amount INT,
+   PRIMARY KEY (id)
+)
+
+INSERT INTO orders_new (name, customer_id, amount) VALUES ('Book', 3, 5000);
+INSERT INTO orders_new (name, customer_id, amount) VALUES ('Car', 6, 100000);
+INSERT INTO orders_new (name, customer_id, amount) VALUES ('Art', 7, 800);
+
+CREATE TABLE orders_new_different_cols (
+   id INT NOT NULL AUTO_INCREMENT,
+   name VARCHAR (50),
+   customer_id INT,
+   amount INT,
+   code INT,
+   PRIMARY KEY (id)
+)
+
+INSERT INTO orders_new_different_cols (name, customer_id, amount, code) VALUES ('Book', 3, 5000, 789456);
+INSERT INTO orders_new_different_cols (name, customer_id, amount, code) VALUES ('Car', 6, 100000, 159357);
+INSERT INTO orders_new_different_cols (name, customer_id, amount, code) VALUES ('Art', 7, 800, 976431);
 
 -- SELECT
    -- SQL is case insensitive but it is a good practice to use UPPER CASE for keywords
@@ -198,7 +229,7 @@ ORDER BY customers.id;
 --NEW INNER JOIN VARIANT:
 SELECT * FROM customers INNER JOIN orders ON customers.id=orders.customer_id;
   -- [table 1] INNER JOIN [table 2]
-  -- Only the records matching the join condition are returned.
+  -- Only the records matching the join condition are returned!
 
 --JOIN DOES EXACTLY THE SAME (because JOIN is defaultly of the INNER type):
 SELECT * FROM customers JOIN orders ON customers.id=orders.customer_id;
@@ -208,6 +239,88 @@ SELECT cus.id, cus.last_name, ord.name, ord.amount
 FROM customers AS cus, orders AS ord
 WHERE cus.id=ord.customer_id
 ORDER BY cus.id;
+  -- works also without "AS" keywords but with them it is a good practice
+
+--LEFT JOIN
+  -- Returns all rows from the left table, even if there are no matches in the right table.
+  -- If no match is found for a particular row, NULL is returned.
+SELECT * FROM customers LEFT JOIN orders ON customers.id=orders.customer_id;
+  -- [left table] LEFT JOIN [right table]
+  -- LEFT OUTER JOIN is the same
+
+--RIGHT JOIN
+SELECT * FROM customers RIGHT JOIN orders ON customers.id=orders.customer_id;
+
+--UNION
+  -- Combines multiple datasets into a single dataset, and removes any existing duplicates.
+  -- Used for similar data across database/databases/servers.
+  -- Combines the result-sets of two or more SELECT statements.
+  -- The number of columns, their order and data type must be the same.
+SELECT name, customer_id, amount FROM orders
+UNION
+SELECT name, customer_id, amount FROM orders_new;
+
+-- UNION ALL
+  -- Does not remove duplicate rows. (faster than UNION)
+SELECT name, customer_id, amount FROM orders
+UNION ALL
+SELECT name, customer_id, amount FROM orders_new;
+
+  -- What if a column is missing in one of the tables?
+  SELECT name, customer_id, amount, NULL FROM orders
+  UNION
+  SELECT name, customer_id, amount, code FROM orders_new_different_cols;
+  -- insteadof NULL we can use anything, that will be the default missing value (ex.: 'N/A')
+
+-- UPDATE
+UPDATE customers 
+SET salary=9999, last_name = 'Warren'
+WHERE id=1;
+  -- without WHERE all columns would by updated!
+
+-- DELETE
+DELETE FROM customers
+WHERE id=1;
+  -- without WHERE all columns would by deleted!
+  -- primary keys are not shifted, they stay the same
+
+/* ----- MOST USED DATA TYPES -----
+┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│                                                 Numeric                                                            │
+├─────────────────────────────┬──────────────────────────────────────────────────────────────────────────────────────┤
+│ INT                         │ integer (signed/unsigned)                                                            │
+│ FLOAT(M,D)                  │ Signed. Optionally: display length (M), number of decimals (D).                      │
+│ DOUBLE(M,D)                 │ Signed. Optionally: display length (M), number of decimals (D).                      │
+│ BOOL                        │ 0 = false, nonzero = true. Synonymum of TINYINT(1).                                  │
+├─────────────────────────────┴──────────────────────────────────────────────────────────────────────────────────────┤
+│                                              Date and Time                                                         │
+├─────────────────────────────┬──────────────────────────────────────────────────────────────────────────────────────┤
+│ DATE                        │ YYYY-MM-DD                                                                           │
+│ DATETIME                    │ YYYY-MM-DD HH:MM:SS                                                                  │
+│ TIMESTAMP                   │ seconds from Unix Epoch (midnight, January 1, 1970), converts to UTC when  retrieved │
+│ TIME                        │ HH:MM:SS                                                                             │
+│ YEAR                        │ YYYY                                                                                 │
+├─────────────────────────────┴──────────────────────────────────────────────────────────────────────────────────────┤
+│                                                 String                                                             │
+├─────────────────────────────┬──────────────────────────────────────────────────────────────────────────────────────┤
+│ CHAR(size)                  │ Fixed-length, size = 0–255.                                                          │
+│ VARCHAR(max_size)           │ Variable-length, max_size = 0–65535                                                  │
+│ BLOB                        │ "Binary Large Objects" (ex.: image). Max. 65,535 bytes.                              │
+│ TEXT                        │ Longer text, max. 65,535 bytes.                                                      │
+│ ENUM(val1, val2, val3, ...) │ Only one value from the list is allowed ('val1').                                    │
+│ SET(val1, val2, val3, ...)  │ Only one or more values from the list are allowed ('val1,val2').                     │
+└─────────────────────────────┴──────────────────────────────────────────────────────────────────────────────────────┘
+*/
+
+
+
+
+
+
+
+
+
+
 
 
 
