@@ -346,6 +346,29 @@ DROP TABLE orders_new_different_cols;
 -- rename table
 RENAME TABLE orders_new TO orders_newer;
 
+--VIEW
+  -- view is a table based on a query (result-set) saved under a name
+  -- summarizes data from various tables and uses it to generate reports/can be given to users
+  -- always shows up-to-date data
+
+--CREATE VIEW
+CREATE VIEW Report AS
+SELECT first_name, lastname
+FROM  customers;
+
+--Querying a view
+SELECT * FROM Report;
+  -- We do not call now the original query but just simply the view.
+
+--Updating a view
+CREATE OR REPLACE VIEW Report AS
+SELECT first_name, lastname, city
+FROM  customers;
+
+--Delet a view
+DROP VIEW Report;
+
+
 
 
 
