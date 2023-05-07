@@ -25,7 +25,7 @@ CREATE DATABASE company;
 /*
  • INT = Integer = medium integer data type. Range is from -2147483648 to 2147483647 (it is SIGNED as default).
    • (10) has nothing to do with number range. It is "display width" metadata in result set, that can be used
-     e.g. to display spaces before the number by an application (if needed). It is now deprecated.
+     e.g. to display spaces before the number by an application (if needed). It is now !!DEPRECATED!!
  • VARCHAR = Variable Characters = string data type, 50 = maximum length (only the actual length will consume memory). Can be from 0 to 65535.
  • AUTO_INCREMENT will automatically fill in the PRIMARY KEY column with incremented number (1, 2, 3...). This column is by default NOT NULL.
  • NOT NULL = the column can not have any NULL values.
