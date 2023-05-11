@@ -365,5 +365,5 @@ CREATE OR REPLACE VIEW Report AS
 SELECT first_name, lastname, city
 FROM  customers;
 
---Delet a view
+--Delete a view
 DROP VIEW Report;
